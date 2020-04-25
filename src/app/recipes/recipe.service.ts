@@ -34,8 +34,12 @@ export class RecipeService {
      * The slice() method will return a new array which is an exact copy of this array.
      * Therefore, we don't get a reference of this array; we just get a copy.
      */
-    getRecipes() {
+    getRecipes(): Recipe[] {
         return this.recipes.slice();
+    }
+
+    getRecipe(index: number): Recipe {
+        return this.recipes[index];
     }
 
     addIngredientsToShoppingList(ingredients: Ingredient[]) {
