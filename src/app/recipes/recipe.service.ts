@@ -26,10 +26,18 @@ export class RecipeService {
             [
                 new Ingredient('Buns', 2),
                 new Ingredient('Meat', 1)
+            ]),
+        new Recipe(
+            'Spaghetti',
+            'DescriptionSpaghetti is a long, thin, cylindrical pasta',
+            'https://upload.wikimedia.org/wikipedia/commons/2/2a/Spaghetti_al_Pomodoro.JPG',
+            [
+                new Ingredient('Spaghetti', 100),
+                new Ingredient('Tomato', 2)
             ])
     ];
 
-    constructor(private shoppingListService: ShoppingListService) {}
+    constructor(private shoppingListService: ShoppingListService) { }
 
     /**
      * The slice() method will return a new array which is an exact copy of this array.
