@@ -39,6 +39,11 @@ export class RecipeService {
 
     constructor(private shoppingListService: ShoppingListService) { }
 
+    setRecipes(recipes: Recipe[]): void {
+        this.recipes = recipes;
+        this.recipesChanged.next(this.recipes.slice());
+    }
+
     /**
      * The slice() method will return a new array which is an exact copy of this array.
      * Therefore, we don't get a reference of this array; we just get a copy.

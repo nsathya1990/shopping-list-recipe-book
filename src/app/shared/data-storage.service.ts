@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+import { Recipe } from '../recipes/recipe.model';
+
 import { RecipeService } from '../recipes/recipe.service';
 
 // Since we are injecting the HTTPClient service into this service, we add the @Injectable() decorator
@@ -16,6 +18,13 @@ export class DataStorageService {
         this.httpClient.put('https://ng-shooping-list-recipe-book.firebaseio.com/recipes.json', recipes)
             .subscribe(response => {
                 console.log(response);
+            });
+    }
+
+    fetchRecipes() {
+        this.httpClient.get<Recipe[]>('https://ng-shooping-list-recipe-book.firebaseio.com/recipes.json')
+            .subscribe(recipes => {
+                this.recipeService.setRecipes(recipes);
             });
     }
 
