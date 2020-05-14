@@ -10,7 +10,7 @@ import { ShoppingListService } from '../shopping-list/shopping-list.service';
 export class RecipeService {
 
     recipesChanged = new Subject<Recipe[]>();
-    private recipes: Recipe[] = [
+    /* private recipes: Recipe[] = [
         new Recipe(
             'Big Fat Burger',
             'What else you need to say?',
@@ -29,13 +29,14 @@ export class RecipeService {
             ]),
         new Recipe(
             'Spaghetti',
-            'DescriptionSpaghetti is a long, thin, cylindrical pasta',
+            'Spaghetti is a long, thin, cylindrical pasta',
             'https://upload.wikimedia.org/wikipedia/commons/2/2a/Spaghetti_al_Pomodoro.JPG',
             [
                 new Ingredient('Spaghetti', 100),
                 new Ingredient('Tomato', 2)
             ])
-    ];
+    ]; */
+    private recipes: Recipe[] = [];
 
     constructor(private shoppingListService: ShoppingListService) { }
 
