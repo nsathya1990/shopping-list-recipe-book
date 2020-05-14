@@ -5,5 +5,13 @@ import { Component } from '@angular/core';
     templateUrl: './auth.component.html'
 })
 export class AuthComponent {
+
+    isLoginMode = true;
+
     constructor() {}
+
+    onSwitchMode(): void {
+        this.isLoginMode = !this.isLoginMode;
+    }
+
 }
