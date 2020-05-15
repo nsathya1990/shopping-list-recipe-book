@@ -55,7 +55,7 @@ export class AuthService {
                 }));
     }
 
-    private handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
+    private handleAuthentication(email: string, userId: string, token: string, expiresIn: number): void {
         // expiresIn - The number of seconds in which the ID token expires
         const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
         const user = new User(email, userId, token, expirationDate);
