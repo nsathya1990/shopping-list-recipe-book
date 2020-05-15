@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, Subject } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+
+import { User } from './user.model';
 
 export interface AuthResponseData {
     idToken: string;
@@ -18,6 +20,7 @@ export interface AuthResponseData {
 export class AuthService {
 
     API_KEY = 'AIzaSyCVUJfJsjp-zNGDvCgEUhZ3vDoiOPPNdvE';
+    user = new Subject<User>();
 
     constructor(private httpClient: HttpClient) { }
 
@@ -27,7 +30,14 @@ export class AuthService {
                 email,
                 password,
                 returnSecureToken: true
-            }).pipe(catchError(this.handleError));
+            })
+            .pipe(
+                catchError(this.handleError),
+                tap((resData: AuthResponseData) => {
+                    this.handleAuthentication(
+                        resData.email, resData.localId, resData.idToken, +resData.expiresIn);
+                })
+            );
     }
 
     login(email: string, password: string): Observable<AuthResponseData | string> {
@@ -36,7 +46,20 @@ export class AuthService {
                 email,
                 password,
                 returnSecureToken: true
-            }).pipe(catchError(this.handleError));
+            })
+            .pipe(
+                catchError(this.handleError),
+                tap((resData: AuthResponseData) => {
+                    this.handleAuthentication(
+                        resData.email, resData.localId, resData.idToken, +resData.expiresIn);
+                }));
+    }
+
+    private handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
+        // expiresIn - The number of seconds in which the ID token expires
+        const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+        const user = new User(email, userId, token, expirationDate);
+        this.user.next(user);
     }
 
     private handleError(errorRes: HttpErrorResponse): Observable<string> {
