@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 import { User } from './user.model';
 
@@ -22,7 +23,7 @@ export class AuthService {
     API_KEY = 'AIzaSyCVUJfJsjp-zNGDvCgEUhZ3vDoiOPPNdvE';
     user = new BehaviorSubject<User>(null);
 
-    constructor(private httpClient: HttpClient) { }
+    constructor(private httpClient: HttpClient, private router: Router) { }
 
     signup(email: string, password: string): Observable<AuthResponseData | string> {
         return this.httpClient
@@ -53,6 +54,11 @@ export class AuthService {
                     this.handleAuthentication(
                         resData.email, resData.localId, resData.idToken, +resData.expiresIn);
                 }));
+    }
+
+    logout(): void {
+        this.user.next(null);
+        this.router.navigate(['/auth']);
     }
 
     private handleAuthentication(email: string, userId: string, token: string, expiresIn: number): void {
