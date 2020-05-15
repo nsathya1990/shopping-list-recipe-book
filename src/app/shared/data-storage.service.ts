@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map, tap, take, exhaustMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 import { Recipe } from '../recipes/recipe.model';
 
 import { RecipeService } from '../recipes/recipe.service';
+import { AuthService } from '../auth/auth.service';
 
 // Since we are injecting the HTTPClient service into this service, we add the @Injectable() decorator
 @Injectable({
@@ -13,7 +14,7 @@ import { RecipeService } from '../recipes/recipe.service';
 })
 export class DataStorageService {
 
-    constructor(private httpClient: HttpClient, private recipeService: RecipeService) { }
+    constructor(private httpClient: HttpClient, private recipeService: RecipeService, private authService: AuthService) { }
 
     storeRecipes(): void {
         const recipes = this.recipeService.getRecipes();
@@ -24,15 +25,22 @@ export class DataStorageService {
     }
 
     fetchRecipes(): Observable<Recipe[]> {
-        return this.httpClient.get<Recipe[]>('https://ng-shooping-list-recipe-book.firebaseio.com/recipes.json')
-            .pipe(map(recipes => {
+        return this.authService.user.pipe(
+            take(1),
+            exhaustMap(user => {
+                return this.httpClient.get<Recipe[]>('https://ng-shooping-list-recipe-book.firebaseio.com/recipes.json', {
+                    params: new HttpParams().set('auth', user.token)
+                });
+            }),
+            map(recipes => {
                 return recipes.map(recipe => {
                     return {
                         ...recipe,
                         ingredients: recipe.ingredients ? recipe.ingredients : []
                     };
                 });
-            }), tap(recipes => {
+            }),
+            tap(recipes => {
                 this.recipeService.setRecipes(recipes);
             }));
     }
