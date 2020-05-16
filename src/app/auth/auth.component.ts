@@ -1,9 +1,11 @@
-import { Component, ComponentFactoryResolver } from '@angular/core';
+import { Component, ComponentFactoryResolver, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { AlertComponent } from '../shared/alert/alert.component';
+
+import { PlaceholderDirective } from '../shared/placeholder/placeholder.directive';
 
 import { AuthService, AuthResponseData } from './auth.service';
 
@@ -16,6 +18,7 @@ export class AuthComponent {
     error: string = null;
     isLoading = false;
     isLoginMode = true;
+    @ViewChild(PlaceholderDirective, { static: false }) alertHost: PlaceholderDirective;
 
     constructor(
         private authService: AuthService, private router: Router, private compponentFactoryResover: ComponentFactoryResolver) { }
@@ -56,7 +59,9 @@ export class AuthComponent {
 
     private showErrorAlert(errorMessage: string): void {
         const alertComponentFactory = this.compponentFactoryResover.resolveComponentFactory(AlertComponent);
-
+        const hostViewContainerRef = this.alertHost.viewContainerRef;
+        hostViewContainerRef.clear();
+        hostViewContainerRef.createComponent(alertComponentFactory);
     }
 
 }
