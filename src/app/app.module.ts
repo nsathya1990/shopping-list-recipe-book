@@ -61,6 +61,7 @@ import { AuthInterceptorService } from './auth/auth-interceptor.service';
       multi: true
     }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [AlertComponent] // not required for Angular version 9 or higher due to the new rendering engine 'Ivy'
 })
 export class AppModule { }
