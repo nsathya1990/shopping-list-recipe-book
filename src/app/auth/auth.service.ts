@@ -4,6 +4,8 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
+import { environment } from '../../environments/environment';
+
 import { User } from './user.model';
 
 export interface AuthResponseData {
@@ -20,7 +22,6 @@ export interface AuthResponseData {
 })
 export class AuthService {
 
-    API_KEY = 'AIzaSyCVUJfJsjp-zNGDvCgEUhZ3vDoiOPPNdvE';
     user = new BehaviorSubject<User>(null);
     private tokenExpirationNumber: any;
 
@@ -28,7 +29,7 @@ export class AuthService {
 
     signup(email: string, password: string): Observable<AuthResponseData | string> {
         return this.httpClient
-            .post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + this.API_KEY, {
+            .post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + environment.firebaseAPIKey, {
                 email,
                 password,
                 returnSecureToken: true
@@ -44,7 +45,8 @@ export class AuthService {
 
     login(email: string, password: string): Observable<AuthResponseData | string> {
         return this.httpClient
-            .post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + this.API_KEY, {
+            .post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='
+                + environment.firebaseAPIKey, {
                 email,
                 password,
                 returnSecureToken: true
