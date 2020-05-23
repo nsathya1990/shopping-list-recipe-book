@@ -1,8 +1,6 @@
-import { Action } from '@ngrx/store';
-
 import { Ingredient } from '../../shared/ingredient.model';
 
-import { ADD_INGREDIENT } from './shopping-list.actions';
+import * as ShoppingListActions from './shopping-list.actions';
 
 const initialState = {
     ingredients: [
@@ -14,13 +12,13 @@ const initialState = {
 // This function will be called by NgRx by passing two arguments
 // 'state' is the current state before it was changed. It is changed by the Reducer
 // 'action' is the action that triggers the Reducer and the state update
-export function ShoppingListReducer(state = initialState, action: Action) {
+export function ShoppingListReducer(state = initialState, action: ShoppingListActions.AddIngredient) {
     switch (action.type) {
         // The conevention is to use all uppercase text
-        case ADD_INGREDIENT // 'ADD_INGREDIENT':
+        case ShoppingListActions.ADD_INGREDIENT:
             return {
                 ...state,
-                ingredients: [...state.ingredients, action]
+                ingredients: [...state.ingredients, action.payload]
             };
     }
 }
