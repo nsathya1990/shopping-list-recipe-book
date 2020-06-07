@@ -8,10 +8,6 @@ export interface State {
     editedIngredientIndex: number;
 }
 
-export interface AppState {
-    shoppingList: State;
-}
-
 const initialState: State = {
     ingredients: [
         new Ingredient('Apples', 5),
@@ -24,7 +20,7 @@ const initialState: State = {
 // This function will be called by NgRx by passing two arguments
 // 'state' is the current state before it was changed. It is changed by the Reducer
 // 'action' is the action that triggers the Reducer and the state update
-export function ShoppingListReducer(
+export function shoppingListReducer(
     state: State = initialState,
     action: ShoppingListActions.ShoppingListActions) {
     switch (action.type) {
