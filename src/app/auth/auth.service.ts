@@ -27,7 +27,7 @@ export interface AuthResponseData {
 })
 export class AuthService {
 
-    user = new BehaviorSubject<User>(null);
+    // user = new BehaviorSubject<User>(null);
     private tokenExpirationNumber: any;
 
     constructor(private httpClient: HttpClient, private router: Router, private store: Store<fromApp.AppState>) { }
