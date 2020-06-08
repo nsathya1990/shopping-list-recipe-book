@@ -11,6 +11,7 @@ const initialState: State = {
 };
 
 export function authReducer(state = initialState, action: AuthActions.AuthActions) {
+    console.log(state);
     switch (action.type) {
         case AuthActions.LOGIN:
             const user = new User(action.payload.email, action.payload.userId, action.payload.token, action.payload.expirationDate);
@@ -24,6 +25,7 @@ export function authReducer(state = initialState, action: AuthActions.AuthAction
                 user: null
             };
         default:
+            // required for initializing the state
             return state;
     }
 }
