@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, tap, take, exhaustMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { map, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+
+import { Store } from '@ngrx/store';
 
 import { Recipe } from '../recipes/recipe.model';
 
 import { RecipeService } from '../recipes/recipe.service';
-import { AuthService } from '../auth/auth.service';
+
+import * as fromApp from '../store/app.reducer';
+import * as RecipesActions from '../recipes/store/recipe.actions';
 
 // Since we are injecting the HTTPClient service into this service, we add the @Injectable() decorator
 @Injectable({
@@ -14,7 +18,7 @@ import { AuthService } from '../auth/auth.service';
 })
 export class DataStorageService {
 
-    constructor(private httpClient: HttpClient, private recipeService: RecipeService, private authService: AuthService) { }
+    constructor(private httpClient: HttpClient, private recipeService: RecipeService, private store: Store<fromApp.AppState>) { }
 
     storeRecipes(): void {
         const recipes = this.recipeService.getRecipes();
@@ -36,7 +40,8 @@ export class DataStorageService {
                     });
                 }),
                 tap(recipes => {
-                    this.recipeService.setRecipes(recipes);
+                    // this.recipeService.setRecipes(recipes);
+                    this.store.dispatch(new RecipesActions.SetRecipes(recipes));
                 })
             );
     }
