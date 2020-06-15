@@ -30,7 +30,6 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     constructor(
         private authService: AuthService,
-        private router: Router,
         private compponentFactoryResover: ComponentFactoryResolver,
         private store: Store<fromApp.AppState>) { }
 
