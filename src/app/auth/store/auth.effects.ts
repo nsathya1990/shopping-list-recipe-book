@@ -12,6 +12,8 @@ import { environment } from '../../../environments/environment';
 
 import { User } from '../user.model';
 
+import { AuthService } from '../auth.service';
+
 export interface AuthResponseData {
     idToken: string;
     email: string;
@@ -59,7 +61,11 @@ const handleError = (errorRes: any) => {
 
 @Injectable()
 export class AuthEffects {
-    constructor(private actions$: Actions, private httpClient: HttpClient, private router: Router) { }
+    constructor(
+        private actions$: Actions,
+        private httpClient: HttpClient,
+        private router: Router,
+        private authService: AuthService) { }
     @Effect()
     authSignup = this.actions$.pipe(
         ofType(AuthActions.SIGNUP_START),
@@ -70,6 +76,9 @@ export class AuthEffects {
                     password: signupAction.payload.password,
                     returnSecureToken: true
                 }).pipe(
+                    tap(resData => {
+                        this.authService.setLogoutTimer(+resData.expiresIn * 1000);
+                    }),
                     map(resData => {
                         return handleAuthentication(+resData.expiresIn, resData.email, resData.localId, resData.idToken);
                     }),
@@ -90,6 +99,9 @@ export class AuthEffects {
                     password: authData.payload.password,
                     returnSecureToken: true
                 }).pipe(
+                    tap(resData => {
+                        this.authService.setLogoutTimer(+resData.expiresIn * 1000);
+                    }),
                     map(resData => {
                         return handleAuthentication(+resData.expiresIn, resData.email, resData.localId, resData.idToken);
                     }),
@@ -101,7 +113,7 @@ export class AuthEffects {
     );
     @Effect({ dispatch: false })
     authRedirect = this.actions$.pipe(
-        ofType(AuthActions.AUTHENTICATE_SUCCESS, AuthActions.LOGOUT),
+        ofType(AuthActions.AUTHENTICATE_SUCCESS),
         tap(() => {
             this.router.navigate(['/']);
         })
@@ -126,6 +138,8 @@ export class AuthEffects {
                 new Date(userData._tokenExpirationDate)
             );
             if (loadedUser.token) {
+                const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+                this.authService.setLogoutTimer(expirationDuration);
                 return new AuthActions.AuthenticateSuccess({
                     email: loadedUser.email,
                     userId: loadedUser.id,
@@ -141,7 +155,9 @@ export class AuthEffects {
     authLogout = this.actions$.pipe(
         ofType(AuthActions.LOGOUT),
         tap(() => {
+            this.authService.clearLogoutTomer();
             localStorage.removeItem('userData');
+            this.router.navigate(['/auth']);
         })
     );
 }

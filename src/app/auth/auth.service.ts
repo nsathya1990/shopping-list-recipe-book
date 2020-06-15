@@ -1,14 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import { Router } from '@angular/router';
 
 import { Store } from '@ngrx/store';
-
-import { environment } from '../../environments/environment';
-
-import { User } from './user.model';
 
 import * as fromApp from '../store/app.reducer';
 import * as AuthActions from './store/auth.actions';
@@ -30,31 +22,7 @@ export class AuthService {
     // user = new BehaviorSubject<User>(null);
     private tokenExpirationNumber: any;
 
-    constructor(private httpClient: HttpClient, private router: Router, private store: Store<fromApp.AppState>) { }
-
-    autoLogin(): void {
-        const userData: {
-            email: string,
-            id: string,
-            _token: string,
-            _tokenExpirationDate: string
-        } = JSON.parse(localStorage.getItem('userData')); // synchronous method
-        if (!userData) {
-            return;
-        }
-        const loadedUser = new User(userData.email, userData.id, userData._token, new Date(userData._tokenExpirationDate));
-        if (loadedUser.token) {
-            // this.user.next(loadedUser);
-            this.store.dispatch(new AuthActions.AuthenticateSuccess({
-                email: loadedUser.email,
-                userId: loadedUser.id,
-                token: loadedUser.token,
-                expirationDate: new Date(userData._tokenExpirationDate)
-            }));
-            const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
-            this.autoLogout(expirationDuration);
-        }
-    }
+    constructor(private store: Store<fromApp.AppState>) { }
 
     logout(): void {
         this.store.dispatch(new AuthActions.Logout());
@@ -65,49 +33,19 @@ export class AuthService {
         this.tokenExpirationNumber = null;
     }
 
-    autoLogout(expirationDuration: number): void {
+    setLogoutTimer(expirationDuration: number): void {
         console.log(expirationDuration);
         this.tokenExpirationNumber = setTimeout(() => {
-            this.logout();
+            // this.logout();
+            this.store.dispatch(new AuthActions.Logout());
         }, expirationDuration);
     }
 
-    private handleAuthentication(email: string, userId: string, token: string, expiresIn: number): void {
-        // expiresIn - The number of seconds in which the ID token expires
-        const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
-        const user = new User(email, userId, token, expirationDate);
-        // this.user.next(user);
-        this.store.dispatch(new AuthActions.AuthenticateSuccess({ email, userId, token, expirationDate }));
-        this.autoLogout(expiresIn * 1000);
-        localStorage.setItem('userData', JSON.stringify(user));
-    }
-
-    private handleError(errorRes: HttpErrorResponse): Observable<string> {
-        let errorMessage = 'An unknown error occurred';
-        if (!errorRes.error || !errorRes.error.error) {
-            return throwError(errorMessage);
+    clearLogoutTomer(): void {
+        if (this.tokenExpirationNumber) {
+            this.setLogoutTimer(this.tokenExpirationNumber);
+            this.tokenExpirationNumber = null;
         }
-        // this scenario will fail for some error such as network failure, therefore we added the condition above
-        switch (errorRes.error.error.message) {
-            case 'EMAIL_EXISTS':
-                errorMessage = 'The email address is already in use by another account.';
-                break;
-            case 'EMAIL_NOT_FOUND':
-                errorMessage = 'There is no user record corresponding to this identifier. The user may have been deleted.';
-                break;
-            case 'INVALID_PASSWORD':
-                errorMessage = 'The password is invalid or the user does not have a password.';
-                break;
-            case 'USER_DISABLED':
-                errorMessage = 'The user account has been disabled by an administrator.';
-                break;
-            case 'TOO_MANY_ATTEMPTS_TRY_LATER : Too many unsuccessful login attempts. Please try again later.':
-                errorMessage = 'We have blocked all requests from this device due to unusual activity. Try again later.';
-                break;
-            default:
-                break;
-        }
-        return throwError(errorMessage);
     }
 
 }
