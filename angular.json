@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1, 
+  "version": 1,
   "newProjectRoot": "projects",
   "projects": {
     "shopping-list-recipe-book": {
@@ -120,6 +120,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "shopping-list-recipe-book"
+    }
+  },
+  "defaultProject": "shopping-list-recipe-book",
+  "cli": {
+    "analytics": "c928f2ca-8bc7-41b2-8eec-55add6e5afde"
+  }
 }
