@@ -16,7 +16,7 @@ export class RecipeEffects {
     fetchRecipes = this.actions$.pipe(
         ofType(RecipesActions.FETCH_RECIPES),
         switchMap(() => {
-            return this.httpClient.get<Recipe[]>('https://ng-shooping-list-recipe-book.firebaseio.com/recipes.json')
+            return this.httpClient.get<Recipe[]>('https://ng-shooping-list-recipe-book.firebaseio.com/recipes.json');
         }),
         map(recipes => {
             return recipes.map(recipe => {
