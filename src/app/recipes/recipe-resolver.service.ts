@@ -8,9 +8,6 @@ import { Actions, ofType } from '@ngrx/effects';
 
 import { Recipe } from './recipe.model';
 
-import { DataStorageService } from '../shared/data-storage.service';
-import { RecipeService } from './recipe.service';
-
 import * as fromApp from '../store/app.reducer';
 import * as RecipesActions from './store/recipe.actions';
 
@@ -20,8 +17,6 @@ import * as RecipesActions from './store/recipe.actions';
 export class RecipesResolverService implements Resolve<Recipe[]> {
 
     constructor(
-        private dataStorageService: DataStorageService,
-        private recipeService: RecipeService,
         private store: Store<fromApp.AppState>,
         private actions$: Actions) { }
 
