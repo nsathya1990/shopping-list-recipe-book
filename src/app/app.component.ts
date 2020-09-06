@@ -19,7 +19,6 @@ export class AppComponent implements OnInit {
     if (isPlatformBrowser(PLATFORM_ID)) {
       this.store.dispatch(new AuthActions.AutoLogin());
     }
-    console.log('--- log test ---');
   }
 
 }
